@@ -1,48 +1,24 @@
 name: Deploy to AWS
+
 on:
   push:
     branches:
       - main
   # This workflow triggers on a push to the 'main' branch.
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    # Specifies the runner environment.
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      # Checks out your repository under $GITHUB_WORKSPACE.
-
-    - name: Set up AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{" secrets.AWS_ACCESS_KEY_ID "}}
-        aws-secret-access-key: ${{" secrets.AWS_SECRET_ACCESS_KEY "}}
-        aws-region: us-west-2
-      # Configures AWS credentials from GitHub secrets.
-
-    - name: Deploy to AWS
-      run: |
-        name: Build and Push Docker Image to Amazon ECR
-
-on:
-  push:
-    branches:
-      - main
-
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-west-2
   ECR_REPOSITORY: deployment
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    # Specifies the runner environment.
 
     steps:
-      - name: Checkout the repository
+      - name: Checkout code
         uses: actions/checkout@v4
+        # Checks out your repository under $GITHUB_WORKSPACE.
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -50,15 +26,27 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+        # Configures AWS credentials from GitHub secrets.
 
-      - name: Login to Amazon ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        # Logs in to Amazon ECR.
 
-      - name: Build, tag, and push Docker image
+      - name: Build, tag, and push API Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./api
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./webapp
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY-api:$IMAGE_TAG ./api
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY-api:$IMAGE_TAG
+        # Builds and pushes the API Docker image.
+
+      - name: Build, tag, and push WebApp Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY-webapp:$IMAGE_TAG ./webapp
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY-webapp:$IMAGE_TAG
+        # Builds and pushes the WebApp Docker image.
