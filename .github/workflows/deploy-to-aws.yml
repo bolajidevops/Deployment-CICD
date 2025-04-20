@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: deployment
+  ECR_REPOSITORY: nodejs-app
 
 jobs:
   build-and-push:
