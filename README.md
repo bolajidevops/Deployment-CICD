@@ -104,4 +104,4 @@ Set up GitHub Actions to create a new release whenever a new tag is pushed to th
 
 - Deploy applications to popular cloud platforms using GitHub Actions. 
 
-- Configure deployment environments.
+- Configure deployment environment.
