@@ -102,6 +102,34 @@ Set up GitHub Actions to create a new release whenever a new tag is pushed to th
 
 ## Objectives: 
 
-- Deploy applications to popular cloud platforms using GitHub Actions. 
+## Deploying applications to AWS (ECR) using GitHub Actions. 
 
 - Configure deployment environment.
+
+ ## Setting Up GitHub Actions for Deployment 
+ 
+ 1. Creating the Workflow File: 
+ 
+ - Workflow files are YAML files stored in your repository's `.github/workflows` directory.
+
+ - Start by creating a file, e.g., `deploy-to-aws.yml` in this directory.
+
+
+ 2. Defining the Workflow: 
+ 
+ - A workflow is defined with a series of steps that run on specified events.
+
+
+![alt text](images/Deploy-AWS.png)
+
+
+This workflow deploys our application to ASW (ECR) anytime changes are pushed to the main branch.
+
+
+ ## Configuring Deployment Environments
+ 
+ 1. Setting Up Environment Variables and Secrets: 
+
+ - Store sensitive information like API keys and access tokens as GitHub Secrets. 
+
+ - Using environment variables for non-sensitive configuration.
